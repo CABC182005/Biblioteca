@@ -1,0 +1,118 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .container {
+    margin-top: 20px;
+  }
+  
+  .navbar {
+    background-color: #343a40;
+    color: #ffffff;
+  }
+  
+  .navbar-brand {
+    font-weight: bold;
+  }
+  
+  .form-control {
+    width: 100%;
+  }
+  
+  /* Estilos para la tabla */
+  
+  .table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #dee2e6;
+  }
+  
+  .table thead {
+    background-color: #343a40;
+    color: #ffffff;
+  }
+  
+  .table th, .table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f8f9fa;
+  }
+  
+  .table-striped tbody tr:hover {
+    background-color: #e9ecef;
+  }
+  
+  /* Estilos para los botones */
+  
+  .btn {
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .btn-outline-success {
+    color: #28a745;
+    border-color: #28a745;
+  }
+  
+  .btn-outline-success:hover {
+    color: #ffffff;
+    background-color: #28a745;
+  }
+  
+  .btn-outline-primary {
+    color: #007bff;
+    border-color: #007bff;
+  }
+  
+  .btn-outline-primary:hover {
+    color: #ffffff;
+    background-color: #007bff;
+  }
+  
+  /* Estilos para el modal */
+  
+  .modal-content {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .modal-header {
+    background-color: #007bff;
+    color: #ffffff;
+    padding: 15px;
+  }
+  
+  .modal-title {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+  
+  .modal-body {
+    padding: 20px;
+  }
+  
+  .modal-footer {
+    background-color: #f8f9fa;
+    padding: 10px;
+  }
+  
+  /* Estilos adicionales */
+  
+  .container-fluid {
+    max-width: 1200px;
+    margin: auto;
+  }
+  
+  /* Estilos específicos según tus necesidades */
+  
+  /* Añade más estilos según tu diseño y preferencias */
+  
