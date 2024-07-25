@@ -153,7 +153,7 @@ if (validarCampos()) {
   $.ajax({
       url:url+id_libro,
       type: "PUT",
-      data: formData,
+      data: JSON.stringify(formData),
     
       
       success: function(result) {
@@ -242,7 +242,8 @@ function registrarLibro() {
       $.ajax({
           url: url,
           type: "POST",
-          data: formData,
+          contentType: "application/json",
+          data: JSON.stringify(formData),
           success: function (result) {
               Swal.fire({
                   title: "¡Excelente!",
