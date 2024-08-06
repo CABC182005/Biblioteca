@@ -55,11 +55,11 @@ function listarPrestamos(filtro) {
             tbody.empty();
             result.forEach(function(prestamo) {
                 var fila = `<tr>
-                                <td class="table-cell">${prestamo.id}</td>
+                                <td class="table-cell">${prestamo.id_prestamo}</td>
                                 <td class="table-cell">${prestamo.fecha_prestamo}</td>
                                 <td class="table-cell">${prestamo.fecha_devolucion}</td>
-                                <td class="table-cell">${prestamo.usuario.nombre}</td>
-                                <td class="table-cell">${prestamo.libro.titulo}</td>
+                                <td class="table-cell">${prestamo.nombre_usuario}</td>
+                                <td class="table-cell">${prestamo.titulo_libro}</td>
                                 <td class="table-cell">${prestamo.estado}</td>
                                 <td class="table-cell">
                                     <button class="btn_editar btn-editar" data-id="${prestamo.id}">
@@ -114,7 +114,7 @@ function cargarDatosPrestamoEnModal(prestamoId) {
             $("#editar-fecha_prestamo").val(prestamo.fecha_prestamo);
             $("#editar-fecha_devolucion").val(prestamo.fecha_devolucion);
             $("#editar-usuario").val(prestamo.usuario.id);
-            $("#editar-libro").val(prestamo.libro.id);
+            $("#editar-libro").val(prestamo.id_libro);
 
             $("#guardar-cambios").off("click").on("click", function() {
                 actualizarPrestamo(prestamoId);
@@ -287,8 +287,8 @@ function cargarListaUsuarios() {
         success: function (data) {
             data.forEach(function (usuario) {
                 var option = $("<option></option>")
-                    .val(usuario.id)
-                    .text(usuario.id);
+                    .val(usuario.id_usuario)
+                    .text(usuario.nombre_usuario);
                 usuarioSelect.append(option);
             });
         },
@@ -313,8 +313,8 @@ function cargarListaLibros() {
         success: function (data) {
             data.forEach(function (libro) {
                 var option = $("<option></option>")
-                    .val(libro.id)
-                    .text(libro.id + " - " + libro.isbn);
+                    .val(libro.id_libro)
+                    .text(libro.titulo_libro + " - " + libro.isbn_libro);
                 libroSelect.append(option);
             });
         },
