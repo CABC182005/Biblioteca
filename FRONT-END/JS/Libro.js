@@ -1,6 +1,5 @@
 var url = "http://localhost:8080/api/v1/libro/";
 
-
 function listarLibro() {
   var capturarFiltro = document.getElementById("inputSearch").value;
   var urlLocal = url;
@@ -11,7 +10,7 @@ function listarLibro() {
   $.ajax({
     url: urlLocal,
     type: "GET",
-    success: function(result) {
+    success: function (result) {
       console.log(result);
 
       var cuerpoTabla = document.getElementById("cuerpoTabla");
@@ -32,7 +31,7 @@ function listarLibro() {
         let botonEditarLibro = document.createElement("button");
         botonEditarLibro.value = result[i]["id_libro"];
         botonEditarLibro.innerHTML = "Editar";
-        botonEditarLibro.onclick = function(e) {
+        botonEditarLibro.onclick = function (e) {
           $('#exampleModal').modal('show');
           consultarLibroID(this.value);
         }
@@ -43,13 +42,22 @@ function listarLibro() {
         let botonEliminarLibro = document.createElement("button");
         botonEliminarLibro.value = result[i]["id_libro"];
         botonEliminarLibro.innerHTML = "Eliminar";
-        botonEliminarLibro.onclick = function(e) {
-          // Aquí deberías escribir la lógica para eliminar el libro con el id correspondiente
-          // Puedes usar una función separada para realizar la eliminación
+        botonEliminarLibro.onclick = function (e) {
           eliminarLibro(this.value);
         }
         botonEliminarLibro.className = "btn btn-danger eliminar-libro";
         celdaOpcionEliminar.appendChild(botonEliminarLibro);
+
+        let celdaOpcionDetalles = document.createElement("td");
+        let botonDetalles = document.createElement("button");
+        botonDetalles.className = "btn btn-info";
+        botonDetalles.innerHTML = "Detalle";
+        botonDetalles.onclick = (function(libro) {
+          return function() {
+            verDetalles(libro);
+          }
+        })(result[i]);
+        celdaOpcionDetalles.appendChild(botonDetalles);
 
         celdaId.innerText = result[i]["id_libro"];
         celdaTituloLibro.innerText = result[i]["titulo_libro"];
@@ -68,19 +76,18 @@ function listarLibro() {
         trResgistro.appendChild(celdaEjemplaresOcupados);
         trResgistro.appendChild(celdaOpcionEditar);
         trResgistro.appendChild(celdaOpcionEliminar);
+        trResgistro.appendChild(celdaOpcionDetalles);
 
         cuerpoTabla.appendChild(trResgistro);
       }
     },
-    error: function(error) {
+    error: function (error) {
       alert("Error en la petición " + error);
     }
   });
 }
 
-
 function eliminarLibro(idLibro) {
-  // Confirmar con el usuario antes de eliminar
   Swal.fire({
     title: "¿Estás seguro?",
     text: "¿Deseas eliminar este libro?",
@@ -92,22 +99,18 @@ function eliminarLibro(idLibro) {
     cancelButtonText: "Cancelar"
   }).then((result) => {
     if (result.isConfirmed) {
-      // Realizar la petición AJAX para eliminar el libro
       $.ajax({
         url: url + idLibro,
         type: "DELETE",
-        success: function(response) {
-          // Mostrar mensaje de confirmación
+        success: function (response) {
           Swal.fire({
             title: "¡Eliminado!",
             text: "El libro ha sido eliminado correctamente.",
             icon: "success"
           });
-          // Volver a cargar la lista de libros después de eliminar
           listarLibro();
         },
-        error: function(error) {
-          // Mostrar mensaje de error si la petición falla
+        error: function (error) {
           Swal.fire("Error", "Error al eliminar el libro. " + error.responseText, "error");
         }
       });
@@ -115,101 +118,41 @@ function eliminarLibro(idLibro) {
   });
 }
 
-
-
-
-//
-function consultarLibroID(id){
-  //alert(id);
+function consultarLibroID(id) {
   $.ajax({
-      url:url+id,
-      type:"GET",
-      success: function(result){
-          document.getElementById("id_libro").value=result["id_libro"];
-          document.getElementById("titulo_libro").value=result["titulo_libro"];
-          document.getElementById("autor_libro").value=result["autor_libro"];
-          document.getElementById("isbn_libro").value=result["isbn_libro"];
-          document.getElementById("genero_libro").value=result["genero_libro"];
-          document.getElementById("numero_ejemplares_disponibles").value=result["numero_ejemplares_disponibles"];
-          document.getElementById("numero_ejemplares_ocupados").value=result["numero_ejemplares_ocupados"];
-      }
-  });
-}
-//2.Crear petición que actualice la información del libro
-
-
-function actualizarLibro() { 
-  var id_libro=document.getElementById("id_libro").value
-  let formData={
-      "titulo_libro": document.getElementById("titulo_libro").value,
-      "autor_libro": document.getElementById("autor_libro").value,
-      "isbn_libro": document.getElementById("isbn_libro").value,
-      "genero_libro": document.getElementById("genero_libro").value,
-      "numero_ejemplares_disponibles": document.getElementById("numero_ejemplares_disponibles").value,
-      "numero_ejemplares_ocupados": document.getElementById("numero_ejemplares_ocupados").value
-};
-
-if (validarCampos()) {
-  $.ajax({
-      url:url+id_libro,
-      type: "PUT",
-      data: JSON.stringify(formData),
-    
-      
-      success: function(result) {
-        
-          // Manejar la respuesta exitosa según necesites
-          Swal.fire({
-              title: "¡Excelente!",
-              text: "Se guardó correctamente",
-              icon: "success"
-            });
-          // Puedes hacer algo adicional como recargar la lista de libros
-          listarLibro();
-      },
-      error: function(error) {
-          // Manejar el error de la petición
-          Swal.fire({
-              title: "¡Error!",
-              text: "No se guardó",
-              icon: "error"
-            });
-      },
-      error: function (error) {
-        Swal.fire("Error", "Error al guardar, " + error.responseText, "error");
+    url: url + id,
+    type: "GET",
+    success: function (result) {
+      document.getElementById("id_libro").value = result["id_libro"];
+      document.getElementById("titulo_libro").value = result["titulo_libro"];
+      document.getElementById("autor_libro").value = result["autor_libro"];
+      document.getElementById("isbn_libro").value = result["isbn_libro"];
+      document.getElementById("genero_libro").value = result["genero_libro"];
+      document.getElementById("numero_ejemplares_disponibles").value = result["numero_ejemplares_disponibles"];
+      document.getElementById("numero_ejemplares_ocupados").value = result["numero_ejemplares_ocupados"];
     }
   });
-  } else {
+}
+
+function verDetalles(libro) {
   Swal.fire({
-      title: "¡Error!",
-      text: "Llene todos los campos correctamente",
-      icon: "error"
-    });
-  }
-  function validarCampos() {
-    // Obtener los valores de los campos
-    var titulo_libro = document.getElementById("titulo_libro").value;
-    var autor_libro = document.getElementById("autor_libro").value;
-    var isbn_libro = document.getElementById("isbn_libro").value;
-    var genero_libro = document.getElementById("genero_libro").value;
-    var numero_ejemplares_disponibles = document.getElementById("numero_ejemplares_disponibles").value;
-    var numero_ejemplares_ocupados = document.getElementById("numero_ejemplares_ocupados").value
-  
-    // Verificar si algún campo está vacío
-    if (titulo_libro === '' || autor_libro === '' || isbn_libro === '' || genero_libro === '' || numero_ejemplares_disponibles === '' || numero_ejemplares_ocupados === '') {
-      return false; // Al menos un campo está vacío
-    } else {
-      return true; // Todos los campos están llenos
-    }
-  }
-  
+    title: 'Detalles del Libro',
+    html: `
+      <p><strong>ID:</strong> ${libro.id_libro}</p>
+      <p><strong>Título:</strong> ${libro.titulo_libro}</p>
+      <p><strong>Autor:</strong> ${libro.autor_libro}</p>
+      <p><strong>ISBN:</strong> ${libro.isbn_libro}</p>
+      <p><strong>Género:</strong> ${libro.genero_libro}</p>
+      <p><strong>Ejemplares Disponibles:</strong> ${libro.numero_ejemplares_disponibles}</p>
+      <p><strong>Ejemplares Ocupados:</strong> ${libro.numero_ejemplares_ocupados}</p>
+    `,
+    icon: 'info',
+    confirmButtonText: 'Cerrar'
+  });
 }
 
-  
-
-function registrarLibro() {
-
-
+function actualizarLibro() {
+  var id_libro = document.getElementById("id_libro").value;
   let formData = {
     "titulo_libro": document.getElementById("titulo_libro").value,
     "autor_libro": document.getElementById("autor_libro").value,
@@ -217,228 +160,92 @@ function registrarLibro() {
     "genero_libro": document.getElementById("genero_libro").value,
     "numero_ejemplares_disponibles": document.getElementById("numero_ejemplares_disponibles").value,
     "numero_ejemplares_ocupados": document.getElementById("numero_ejemplares_ocupados").value
-
   };
 
-  let camposValidos = true;
-  let camposRequeridos = [
-      "titulo_libro",
-      "autor_libro",
-      "isbn_libro",
-      "genero_libro",
-      "numero_ejemplares_disponibles",
-      "numero_ejemplares_ocupados"
-  ];
-
-  camposRequeridos.forEach(function(campo) {
-      let valorCampo = document.getElementById(campo).value.trim();
-      if (valorCampo === "") {
-          camposValidos = false;
-          return false; // Terminar la iteración si se encuentra un campo vacío
-      }
-  });
-
-  if (camposValidos) {
-      $.ajax({
-          url: url,
-          type: "POST",
-          contentType: "application/json",
-          data: JSON.stringify(formData),
-          success: function (result) {
-              Swal.fire({
-                  title: "¡Excelente!",
-                  text: "Se guardó correctamente",
-                  icon: "success"
-              });
-              limpiarLibro();
-          },
-          error: function (error) {
-              Swal.fire("Error", "Error al guardar, " + error.responseText, "error");
-          },
-      });
-
-  } else {
-      Swal.fire({
+  if (validarCampos()) {
+    $.ajax({
+      url: url + id_libro,
+      type: "PUT",
+      contentType: "application/json",
+      data: JSON.stringify(formData),
+      success: function (result) {
+        Swal.fire({
+          title: "¡Excelente!",
+          text: "Se guardó correctamente",
+          icon: "success"
+        });
+        listarLibro();
+      },
+      error: function (error) {
+        Swal.fire({
           title: "¡Error!",
-          text: "Llene todos los campos correctamente",
+          text: "No se guardó",
           icon: "error"
-      });
-  }
-
-}
-
-//se ejecuta la peticion
-
-
-function validarCampos() {
-  var isbn_libro = document.getElementById("isbn_libro");
-  return validarIsbn_libro(isbn_libro);
-}
-function validarIsbn_libro(cuadroNumero) {
-  /*
-  isbn del libro
-  min=5
-  max=40
-  numero entero
-
-  si cumple, se cambia color a verde
-  si no, se cambia a rojo
-  */
-  var valor = cuadroNumero.value;
-  var valido = true;
-  if (valor.length < 5 || valor.length > 40) {
-    valido = false
-  }
-
-  if (valido) {
-    //cuadro de texto cumple
-    cuadroNumero.className = "form-control is-valid";
+        });
+      }
+    });
   } else {
-    //cuadro de texto no cumple
-    cuadroNumero.className = "form-control is-invalid";
+    Swal.fire({
+      title: "¡Error!",
+      text: "Llene todos los campos correctamente",
+      icon: "error"
+    });
   }
-  return valido;
-
 }
 
-//ValidadAutor
+function registrarLibro() {
+  let formData = {
+    "titulo_libro": document.getElementById("titulo_libro").value,
+    "autor_libro": document.getElementById("autor_libro").value,
+    "isbn_libro": document.getElementById("isbn_libro").value,
+    "genero_libro": document.getElementById("genero_libro").value,
+    "numero_ejemplares_disponibles": document.getElementById("numero_ejemplares_disponibles").value,
+    "numero_ejemplares_ocupados": document.getElementById("numero_ejemplares_ocupados").value
+  };
 
-function validarCampos() {
-  var autor_libro = document.getElementById("autor_libro");
-  return validarAutor_libro(autor_libro);
-}
-function validarAutor_libro(cuadroNumero) {
-
-  var valor = cuadroNumero.value;
-  var valido = true;
-  if (valor.length < 3 || valor.length > 40) {
-    valido = false
-  }
-
-  if (valido) {
-    //cuadro de texto cumple
-    cuadroNumero.className = "form-control is-valid";
+  if (validarCampos()) {
+    $.ajax({
+      url: url,
+      type: "POST",
+      contentType: "application/json",
+      data: JSON.stringify(formData),
+      success: function (result) {
+        Swal.fire({
+          title: "¡Excelente!",
+          text: "Se guardó correctamente",
+          icon: "success"
+        });
+        limpiarLibro();
+        listarLibro();
+      },
+      error: function (error) {
+        Swal.fire("Error", "Error al guardar, " + error.responseText, "error");
+      }
+    });
   } else {
-    //cuadro de texto no cumple
-    cuadroNumero.className = "form-control is-invalid";
+    Swal.fire({
+      title: "¡Error!",
+      text: "Llene todos los campos correctamente",
+      icon: "error"
+    });
   }
-  return valido;
-
 }
-
-//Valida el titulo del libro
-function validarCampos() {
-  var titulo_libro = document.getElementById("titulo_libro");
-  return validarTitulo_libro(titulo_libro);
-}
-function validarTitulo_libro(cuadroNumero) {
-  
-  var valor = cuadroNumero.value;
-  var valido = true;
-  if (valor.length < 2 || valor.length > 40) {
-    valido = false
-  }
-
-  if (valido) {
-    //cuadro de texto cumple
-    cuadroNumero.className = "form-control is-valid";
-  } else {
-    //cuadro de texto no cumple
-    cuadroNumero.className = "form-control is-invalid";
-  }
-  return valido;
-
-}
-
-//Valida el genero
-function validarCampos() {
-  var genero_libro = document.getElementById("genero_libro");
-  return validarGenero_libro(genero_libro);
-}
-function validarGenero_libro(cuadroNumero) {
-  
-  var valor = cuadroNumero.value;
-  var valido = true;
-  if (valor.length < 5 || valor.length > 40) {
-    valido = false
-  }
-
-  if (valido) {
-    //cuadro de texto cumple
-    cuadroNumero.className = "form-control is-valid";
-  } else {
-    //cuadro de texto no cumple
-    cuadroNumero.className = "form-control is-invalid";
-  }
-  return valido;
-
-}
-
-//Valida los numeros de ejemplares que estan disponibles
-function validarCampos() {
-  var numero_ejemplares_disponibles = document.getElementById("numero_ejemplares_disponibles");
-  return validarNumero_ejemplares_disponibles(numero_ejemplares_disponibles);
-}
-function validarNumero_ejemplares_disponibles(cuadroNumero) {
-  
-  var valor = cuadroNumero.value;
-  var valido = true;
-  if (valor.length < 1 || valor.length > 40) {
-    valido = false
-  }
-
-  if (valido) {
-    //cuadro de texto cumple
-    cuadroNumero.className = "form-control is-valid";
-  } else {
-    //cuadro de texto no cumple
-    cuadroNumero.className = "form-control is-invalid";
-  }
-  return valido;
-
-}
-//Valida los numeros de ejemplares que ya estan ocupados
-
-
-function validarCampos() {
-  var numero_ejemplares_ocupados = document.getElementById("numero_ejemplares_ocupados");
-  return validarNumero_ejemplares_ocupados(numero_ejemplares_ocupados);
-}
-function validarNumero_ejemplares_ocupados(cuadroNumero) {
-  
-  var valor = cuadroNumero.value;
-  var valido = true;
-  if (valor.length < 1  || valor.length > 40) {
-    valido = false
-  }
-
-  if (valido) {
-    //cuadro de texto cumple
-    cuadroNumero.className = "form-control is-valid";
-  } else {
-    //cuadro de texto no cumple
-    cuadroNumero.className = "form-control is-invalid";
-  }
-  return valido;
-
-}
-
-
-
 
 function limpiarLibro() {
-  document.getElementById("titulo_libro").className="form-control";
-  document.getElementById("autor_libro").className="form-control";
-  document.getElementById("isbn_libro").className="form-control";
-  document.getElementById("genero_libro").className="form-control";
-  document.getElementById("numero_ejemplares_disponibles").className="form-control";
-  document.getElementById("numero_ejemplares_ocupados").className="form-control";
-
-
+  document.getElementById("id_libro").value = "";
   document.getElementById("titulo_libro").value = "";
   document.getElementById("autor_libro").value = "";
   document.getElementById("isbn_libro").value = "";
   document.getElementById("genero_libro").value = "";
   document.getElementById("numero_ejemplares_disponibles").value = "";
   document.getElementById("numero_ejemplares_ocupados").value = "";
+}
+
+function validarCampos() {
+  return document.getElementById("titulo_libro").value.trim() !== "" &&
+    document.getElementById("autor_libro").value.trim() !== "" &&
+    document.getElementById("isbn_libro").value.trim() !== "" &&
+    document.getElementById("genero_libro").value.trim() !== "" &&
+    document.getElementById("numero_ejemplares_disponibles").value.trim() !== "" &&
+    document.getElementById("numero_ejemplares_ocupados").value.trim() !== "";
 }
